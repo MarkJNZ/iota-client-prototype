@@ -10,6 +10,7 @@
 
 // Require the client library packages
 const Iota = require("@iota/core");
+const Converter = require("@iota/converter");
 
 // Create a new instance of the IOTA API object
 // Use the `provider` field to specify which node to connect to
@@ -28,3 +29,24 @@ const seed =
 
 const message = JSON.stringify({ message: "Hello world" });
 const messageInTrytes = Converter.asciiToTrytes(message); //a tryte is just a character between A-Z or the number
+
+// Define a Transaction
+const transfers = [
+  {
+    value: 0,
+    address: address,
+    message: messageInTrytes
+  }
+];
+
+// Send Transaction to the node
+Iota.prepareTransfers(seed, transfers)
+  .then((trytes) => {
+    return iota.sendTrytes(trytes, depth, minimumWeightMagnitude);
+  })
+  .then((bundle) => {
+    console.log(bundle[0].hash);
+  })
+  .catch((err) => {
+    console.error(err);
+  });
